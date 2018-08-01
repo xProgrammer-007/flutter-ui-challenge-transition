@@ -1,18 +1,24 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
 class TopBackground extends StatefulWidget {
   final AnimationController anim;
+  final String imageAssetPath;
+  final Color bgColor;
+
+
   get forward => anim.status == AnimationStatus.forward;
-
   get reverse => anim.status == AnimationStatus.reverse;
-
   get completed => anim.status == AnimationStatus.completed;
+  get dismissed => anim.status == AnimationStatus.dismissed;
 
-
-  get dismissed => anim.status == AnimationStatus.forward;
-  TopBackground({this.anim});
+  TopBackground({
+    this.anim,
+    this.bgColor = Colors.pink,
+    this.imageAssetPath = ''
+  });
   @override
   TopBackgroundState createState() {
     return new TopBackgroundState();
@@ -65,14 +71,14 @@ class TopBackgroundState extends State<TopBackground> {
                 child: new Container(
                     decoration: new BoxDecoration(
                       image: new DecorationImage(
-                        image: new ExactAssetImage('assets/model1.jpg'),
+                        image: new ExactAssetImage(widget.imageAssetPath),
                         fit: BoxFit.cover,
                       ),
                     ),
                     child:Transform(
                       transform: Matrix4.translationValues(0.0, 0.0,0.0)..scale(( widget.anim.value) * 2.5,(widget.anim.value) * 2.5),
                       child: new BackdropFilter(
-                        filter: new ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                        filter: new ImageFilter.blur(sigmaX: 3.0, sigmaY: 3.0),
                         child: new Container(
                           decoration: new BoxDecoration(color: Colors.white.withOpacity(0.0)),
                         ),
@@ -83,7 +89,7 @@ class TopBackgroundState extends State<TopBackground> {
               Opacity(
                 opacity: 1.0 - widget.anim.value,
                 child: Container(
-                  color: Colors.pink.withAlpha(100),
+                  color: widget.bgColor.withAlpha(100),
                 ),
               ),
               Align(
@@ -102,7 +108,7 @@ class TopBackgroundState extends State<TopBackground> {
                       )
                     ],
                       image: DecorationImage(
-                          image:AssetImage('assets/model1.jpg'),
+                          image:AssetImage(widget.imageAssetPath),
                           fit: BoxFit.cover
                       )
                   ),
@@ -115,6 +121,40 @@ class TopBackgroundState extends State<TopBackground> {
   }
 }
 
+
+
+class shadePainter extends CustomPainter{
+AnimationController animationController;
+Paint shadePaint;
+Path path;
+shadePainter({
+  this.animationController,
+}): path  = new Path(), shadePaint = new Paint(){
+  shadePaint
+  ..style = PaintingStyle.fill
+  ..strokeWidth = 10.0;
+}
+  @override
+  void paint(Canvas canvas, Size size) {
+    canvas.translate(0.0, (-160.0 * (animationController.value)));
+    //path.addRect(Rect.fromLTWH(0.0, size.height - 10.0 , size.width,10.0));
+    path.moveTo(0.0, 0.0);
+    path.moveTo(0.0,size.height- 40);
+    path.lineTo(size.width + 50.0, size.height + (170.0 * ( animationController.value)));
+    //path.lineTo(size.width, size.height -10 * (1.0 - animationController.value));//size.height - size.height / 3.1);
+    //path.lineTo(size.width, size.height * animationController.value + 10);
+    path.lineTo(0.0,size.height);
+    path.close();
+
+    canvas.drawShadow(path, Colors.black87, 5.0, true);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
+
+}
 
 
 class swordClipper extends CustomClipper<Path>{

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class BackBtnText extends StatefulWidget {
   final AnimationController anim;
   get forward => anim.status == AnimationStatus.forward;

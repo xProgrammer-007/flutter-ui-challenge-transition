@@ -9,7 +9,7 @@ class PlayBtn extends StatefulWidget {
   get completed => anim.status == AnimationStatus.completed;
 
 
-  get dismissed => anim.status == AnimationStatus.forward;
+  get dismissed => anim.status == AnimationStatus.dismissed;
 
 
   PlayBtn({this.anim});
